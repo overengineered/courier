@@ -2,7 +2,7 @@ package courier;
 
 import android.app.Activity;
 import android.support.annotation.MainThread;
-import android.util.LongSparseArray;
+import android.support.v4.util.LongSparseArray;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,43 +10,19 @@ import java.util.Map;
 @MainThread
 public abstract class Crew<InquiryT, ReplyT> {
 
-    public static <InquiryT, ReplyT, InvokerT extends Activity & Hub>
-    TaggedCouriers<InquiryT, ReplyT> tagged(
-            InvokerT invoker,
-            Terminal<InquiryT, ReplyT> terminal,
-            TaggedCouriers.Receiver<ReplyT> receiver) {
-        TaggedCouriers<InquiryT, ReplyT> crew = new TaggedCouriers<>(invoker, terminal, receiver);
-        invoker.getAdministrator().enroll(crew);
-        return crew;
-    }
-
-    public static <InquiryT, ReplyT, InvokerT extends Activity & Hub>
-    NumberedCouriers<InquiryT, ReplyT> numbered(
-            InvokerT invoker,
-            Terminal<InquiryT, ReplyT> terminal,
-            NumberedCouriers.Receiver<ReplyT> receiver) {
-        NumberedCouriers<InquiryT, ReplyT> crew = new NumberedCouriers<>(invoker, terminal, receiver);
-        invoker.getAdministrator().enroll(crew);
-        return crew;
-    }
-
-
     private final Activity mActivity;
     private final Terminal<InquiryT, ReplyT> mTerminal;
-    private int mAdministratorId;
+    private final int mDispatcherId;
 
-    private Crew(Activity activity, Terminal<InquiryT, ReplyT> terminal) {
+    private Crew(Activity activity, Terminal<InquiryT, ReplyT> terminal, int dispatcherId) {
         mActivity = activity;
         mTerminal = terminal;
+        mDispatcherId = dispatcherId;
     }
 
     abstract void relay(Transporter transporter);
 
     abstract void deliver(Transporter transporter, ReplyT reply);
-
-    final void setAdministratorId(int index) {
-        mAdministratorId = index;
-    }
 
     @SuppressWarnings("unchecked")
     private <InvokerT extends Activity & Hub> InvokerT getInvoker() {
@@ -62,11 +38,9 @@ public abstract class Crew<InquiryT, ReplyT> {
         private final Map<String, Courier<InquiryT, ReplyT>> mCouriers = new HashMap<>();
         private final Receiver<ReplyT> mReceiver;
 
-        private TaggedCouriers(
-                Activity activity,
-                Terminal<InquiryT, ReplyT> terminal,
-                Receiver<ReplyT> receiver) {
-            super(activity, terminal);
+        TaggedCouriers(Activity activity, Terminal<InquiryT, ReplyT> terminal, int dispatcherId,
+                       Receiver<ReplyT> receiver) {
+            super(activity, terminal, dispatcherId);
             mReceiver = receiver;
         }
 
@@ -76,7 +50,7 @@ public abstract class Crew<InquiryT, ReplyT> {
                 return courier;
             }
 
-            courier = Courier.assign(super.getInvoker(), super.mTerminal, super.mAdministratorId, tag);
+            courier = new Courier<>(super.getInvoker(), super.mTerminal, null, super.mDispatcherId, tag, 0);
             mCouriers.put(tag, courier);
             return courier;
         }
@@ -102,11 +76,9 @@ public abstract class Crew<InquiryT, ReplyT> {
         private final LongSparseArray<Courier<InquiryT, ReplyT>> mCouriers = new LongSparseArray<>();
         private final Receiver<ReplyT> mReceiver;
 
-        private NumberedCouriers(
-                Activity activity,
-                Terminal<InquiryT, ReplyT> terminal,
-                Receiver<ReplyT> receiver) {
-            super(activity, terminal);
+        NumberedCouriers(Activity activity, Terminal<InquiryT, ReplyT> terminal, int dispatcherId,
+                         Receiver<ReplyT> receiver) {
+            super(activity, terminal, dispatcherId);
             mReceiver = receiver;
         }
 
@@ -116,7 +88,7 @@ public abstract class Crew<InquiryT, ReplyT> {
                 return courier;
             }
 
-            courier = Courier.assign(super.getInvoker(), super.mTerminal, super.mAdministratorId, number);
+            courier = new Courier<>(super.getInvoker(), super.mTerminal, null, super.mDispatcherId, null, number);
             mCouriers.put(number, courier);
             return courier;
         }

@@ -34,7 +34,7 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
     private final InquiryT mInquiry;
     private final Terminal<InquiryT, ReplyT> mTerminal;
 
-    private final int mAdministratorId;
+    private final int mDispatcherId;
     private final String mCrewTag;
     private final long mCrewNumber;
 
@@ -47,13 +47,13 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
     Transporter(InvokerT activity,
                 Terminal<InquiryT, ReplyT> terminal,
                 InquiryT inquiry,
-                int administratorId,
+                int dispatcherId,
                 String crewTag,
                 long crewNumber) {
         mId = provideId();
         mTerminal = terminal;
         mInquiry = inquiry;
-        mAdministratorId = administratorId;
+        mDispatcherId = dispatcherId;
         mCrewTag = crewTag;
         mCrewNumber = crewNumber;
         mActivity = activity;
@@ -80,7 +80,7 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
     }
 
     private void finish() {
-        mActivity.getAdministrator().deliver(mAdministratorId, this, mReply);
+        mActivity.getDispatcher().deliver(mDispatcherId, this, mReply);
         mPhase = Phase.REPLY_DISPATCHED;
         mActivity.getApplication().unregisterActivityLifecycleCallbacks(this);
         mActivityAvailable = false;
@@ -122,7 +122,7 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
 
         if (savedInstanceState.containsKey(getActivityStateKey())) {
             mActivity = asInvoker(activity);
-            mActivity.getAdministrator().relay(mAdministratorId, this);
+            mActivity.getDispatcher().relay(mDispatcherId, this);
         }
     }
 
