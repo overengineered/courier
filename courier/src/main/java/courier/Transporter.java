@@ -16,12 +16,13 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
         implements ActivityLifecycleCallbacks {
 
     @Retention(SOURCE)
-    @IntDef({Phase.IDLE, Phase.RUNNING, Phase.REPLY_READY, Phase.REPLY_DISPATCHED})
+    @IntDef({Phase.IDLE, Phase.RUNNING, Phase.REPLY_READY, Phase.REPLY_DISPATCHED, Phase.CANCELLED})
     private @interface Phase {
         int IDLE = 0;
         int RUNNING = 1;
         int REPLY_READY = 2;
         int REPLY_DISPATCHED = 3;
+        int CANCELLED = 4;
     }
 
     private static int sNextId = 1;
@@ -40,8 +41,10 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
 
     private @Phase int mPhase;
     private InvokerT mActivity;
+    private Exchange mExchange;
     private boolean mActivityAvailable;
     private String mActivityStateKey;
+    private CancellationListener mCancellationListener;
     private ReplyT mReply;
 
     Transporter(InvokerT activity,
@@ -59,6 +62,21 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
         mActivity = activity;
         mActivityAvailable = true;
         mPhase = Phase.IDLE;
+
+        mExchange = new Exchange(activity.getApplicationContext()) {
+            @Override
+            public boolean isCancelled() {
+                return Transporter.this.isCancelled();
+            }
+
+            @Override
+            public void setCancellationListener(CancellationListener listener) {
+                mCancellationListener = listener;
+                if (isCancelled()) {
+                    listener.onCancel();
+                }
+            }
+        };
     }
 
     final String getCrewTag() {
@@ -102,16 +120,30 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
 
     @Override
     protected Object doInBackground(Object[] params) {
-        mReply = mTerminal.exchange(mInquiry);
+        mReply = mTerminal.exchange(mExchange, mInquiry);
         return null;
     }
 
     @Override
     protected void onPostExecute(Object result) {
+        if (mPhase == Phase.CANCELLED) {
+            return;
+        }
+
         mPhase = Phase.REPLY_READY;
         if (mActivityAvailable) {
             finish();
         }
+    }
+
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        mPhase = Phase.CANCELLED;
+        mActivity = null;
+        mActivityAvailable = false;
+        if (mCancellationListener != null)
+            mCancellationListener.onCancel();
     }
 
     @Override
@@ -165,7 +197,9 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
         if (mActivity == activity) {
             mActivity = null;
             if (activity.isFinishing()) {
+                mPhase = Phase.CANCELLED;
                 activity.getApplication().unregisterActivityLifecycleCallbacks(this);
+                cancel(true);
             }
         }
     }

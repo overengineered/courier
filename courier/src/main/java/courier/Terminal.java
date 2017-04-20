@@ -4,5 +4,5 @@ import android.support.annotation.WorkerThread;
 
 public interface Terminal<InquiryT, ReplyT> {
     @WorkerThread
-    ReplyT exchange(InquiryT inquiry);
+    ReplyT exchange(Exchange exchange, InquiryT inquiry);
 }

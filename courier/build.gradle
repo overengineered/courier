@@ -1,5 +1,11 @@
 apply plugin: 'com.android.library'
 
+ext {
+    PUBLISH_GROUP_ID = 'courier'
+    PUBLISH_ARTIFACT_ID = 'courier'
+    PUBLISH_VERSION = '0.2'
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -8,7 +14,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
-        versionName "0.1"
+        versionName "0.2"
 
     }
     buildTypes {
@@ -22,3 +28,5 @@ dependencies {
     compile 'com.android.support:support-annotations:25.0.0'
     compile 'com.android.support:support-core-utils:25.0.0'
 }
+
+apply from: 'https://raw.githubusercontent.com/blundell/release-android-library/master/android-release-aar.gradle'
