@@ -3,7 +3,12 @@ apply plugin: 'com.android.library'
 ext {
     PUBLISH_GROUP_ID = 'courier'
     PUBLISH_ARTIFACT_ID = 'courier'
-    PUBLISH_VERSION = '0.2'
+    PUBLISH_VERSION = findProperty('release-version') ?: 'dev'
+    PUBLISH_OUTPUT = findProperty('release-dest')
+
+    lib = [
+            'support': project.findProperty('asl-version') ?: '25.0.0'
+    ]
 }
 
 android {
@@ -25,8 +30,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-annotations:25.0.0'
-    compile 'com.android.support:support-core-utils:25.0.0'
+    compile "com.android.support:support-annotations:$lib.support"
+    compile "com.android.support:support-core-utils:$lib.support"
 }
 
 apply from: 'https://raw.githubusercontent.com/overengineered/release-android-library/master/android-release-aar.gradle'
