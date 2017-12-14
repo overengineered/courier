@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 ext {
-    PUBLISH_GROUP_ID = 'courier'
+    PUBLISH_GROUP_ID = 'overengineered'
     PUBLISH_ARTIFACT_ID = 'courier'
     PUBLISH_VERSION = findProperty('release-version') ?: 'dev'
     PUBLISH_OUTPUT = findProperty('release-dest')
