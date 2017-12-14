@@ -7,19 +7,19 @@ ext {
     PUBLISH_OUTPUT = findProperty('release-dest')
 
     lib = [
-            'support': project.findProperty('asl-version') ?: '25.0.0'
+            'support': project.findProperty('asl-version') ?: '27.0.2'
     ]
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.2"
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 1
-        versionName "0.2"
+        versionName PUBLISH_VERSION
 
     }
     buildTypes {
@@ -30,8 +30,8 @@ android {
 }
 
 dependencies {
-    compile "com.android.support:support-annotations:$lib.support"
-    compile "com.android.support:support-core-utils:$lib.support"
+    implementation "com.android.support:support-annotations:$lib.support"
+    implementation "com.android.support:support-core-utils:$lib.support"
 }
 
 apply from: 'https://raw.githubusercontent.com/overengineered/release-android-library/master/android-release-aar.gradle'
