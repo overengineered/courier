@@ -1,5 +1,6 @@
 package courier;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;
 import android.os.AsyncTask;
@@ -11,6 +12,7 @@ import java.util.concurrent.Executor;
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
+@SuppressLint("StaticFieldLeak") // this class listens to activity lifecycle to prevent leaks
 final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
         extends AsyncTask<Object, Object, Object>
         implements ActivityLifecycleCallbacks {
