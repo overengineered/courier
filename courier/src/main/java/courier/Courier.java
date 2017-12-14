@@ -30,13 +30,13 @@ public final class Courier<InquiryT, ReplyT> {
         return mTransporter != null;
     }
 
-    public final void dispatch(InquiryT inquiry) {
-        dispatch(inquiry, getInvoker().getDispatcher().getExecutor());
+    public final void start(InquiryT inquiry) {
+        start(inquiry, getInvoker().getDispatcher().getExecutor());
     }
 
-    public final void dispatch(InquiryT inquiry, Executor executor) {
+    public final void start(InquiryT inquiry, Executor executor) {
         if (mTransporter != null) {
-            throw new IllegalStateException("Cannot dispatch while courier is running");
+            throw new IllegalStateException("Cannot start while courier is running");
         }
 
         mTransporter = new Transporter<>(getInvoker(), mMedium, inquiry,
@@ -46,7 +46,7 @@ public final class Courier<InquiryT, ReplyT> {
 
     final void relay(Transporter transporter) {
         if (mTransporter != null && mTransporter != transporter) {
-            throw new IllegalStateException("New dispatch has been issued before finishing previous");
+            throw new IllegalStateException("Courier has started new exchange before finishing previous");
         }
 
         mTransporter = transporter;
@@ -54,7 +54,7 @@ public final class Courier<InquiryT, ReplyT> {
 
     final void deliver(Transporter transporter, ReplyT reply) {
         if (mTransporter != transporter) {
-            throw new IllegalStateException("Cannot deliver result, courier has been issued a new dispatch");
+            throw new IllegalStateException("Cannot deliver result, courier has been started on a new exchange");
         }
 
         mReceiver.onCourierDelivery(reply);
