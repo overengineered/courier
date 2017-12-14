@@ -28,15 +28,15 @@ Activity should implement Hub, add a field to hold Dispatcher. Then use Dispatch
         }
     }
  
- Couriers are assigned to a Terminal, which is the performs the asynchronous operation. It's best to define them outside
+ Couriers are assigned to a Medium, which is the performs the asynchronous operation. It's best to define them outside
  activity class or to make them static to avoid leaking activity reference.
  
      public class NetworkOperations {
-        public static final Terminal<LoginParams, LoginResult> LOGIN =
-                new Terminal<LoginParams, LoginResult>() {
+        public static final Medium<LoginParams, LoginResult> LOGIN =
+                new Medium<LoginParams, LoginResult>() {
             @WorkerThread
             @Override
-            public LoginResult exchange(Exchange exchange, LoginParams loginParams) {
+            public LoginResult resolve(Exchange exchange, LoginParams loginParams) {
                 // perform network request
             }
         };
@@ -46,6 +46,6 @@ After this setup you don't have to worry about orientation changes - Courier wil
 the result there. Courier will also only deliver result if activity is in started state. This allows using
 FragmentManager transactions to show/hide fragments in onCourierDelivery method.
 
-Additionally, Terminal gets passed Exchange parameter which provides access to application context and can be used
+Additionally, Medium gets passed Exchange parameter which provides access to application context and can be used
 to watch for cancellation. Watching for cancellation allows to terminate early if user leaves the activity before
 the operation is finished.

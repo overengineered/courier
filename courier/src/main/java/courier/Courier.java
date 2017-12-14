@@ -9,17 +9,17 @@ import java.util.concurrent.Executor;
 public final class Courier<InquiryT, ReplyT> {
 
     private final Activity mActivity;
-    private final Terminal<InquiryT, ReplyT> mTerminal;
+    private final Medium<InquiryT, ReplyT> mMedium;
     private final Receiver<ReplyT> mReceiver;
     private final String mCrewTag;
     private final long mCrewNumber;
     private final int mDispatcherId;
     private Transporter mTransporter;
 
-    Courier(Activity activity, Terminal<InquiryT, ReplyT> terminal, Receiver<ReplyT> receiver,
+    Courier(Activity activity, Medium<InquiryT, ReplyT> medium, Receiver<ReplyT> receiver,
             int dispatcherId, String crewTag, long crewNumber) {
         mActivity = activity;
-        mTerminal = terminal;
+        mMedium = medium;
         mReceiver = receiver;
         mDispatcherId = dispatcherId;
         mCrewTag = crewTag;
@@ -39,7 +39,7 @@ public final class Courier<InquiryT, ReplyT> {
             throw new IllegalStateException("Cannot dispatch while courier is running");
         }
 
-        mTransporter = new Transporter<>(getInvoker(), mTerminal, inquiry,
+        mTransporter = new Transporter<>(getInvoker(), mMedium, inquiry,
                 mDispatcherId, mCrewTag, mCrewNumber);
         mTransporter.start(executor);
     }

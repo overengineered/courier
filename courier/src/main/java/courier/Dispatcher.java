@@ -27,32 +27,32 @@ public final class Dispatcher {
     }
 
     public <InquiryT, ReplyT> Courier<InquiryT, ReplyT> assignCourier(
-            Terminal<InquiryT, ReplyT> terminal, Receiver<ReplyT> receiver) {
-        Verify.isNotNull(terminal, "terminal");
+            Medium<InquiryT, ReplyT> medium, Receiver<ReplyT> receiver) {
+        Verify.isNotNull(medium, "medium");
         Verify.isNotNull(receiver, "receiver");
         int dispatcherId = -mCouriers.size() - 1;
         final Courier<InquiryT, ReplyT> courier;
-        courier = new Courier<>(mActivity, terminal, receiver, dispatcherId, null, 0);
+        courier = new Courier<>(mActivity, medium, receiver, dispatcherId, null, 0);
         mCouriers.add(courier);
         return courier;
     }
 
     public <InquiryT, ReplyT> Crew.TaggedCouriers<InquiryT, ReplyT> assignTaggedCrew(
-            Terminal<InquiryT, ReplyT> terminal, Crew.TaggedCouriers.Receiver<ReplyT> receiver) {
-        Verify.isNotNull(terminal, "terminal");
+            Medium<InquiryT, ReplyT> medium, Crew.TaggedCouriers.Receiver<ReplyT> receiver) {
+        Verify.isNotNull(medium, "medium");
         Verify.isNotNull(receiver, "receiver");
         final Crew.TaggedCouriers<InquiryT, ReplyT> crew;
-        crew = new Crew.TaggedCouriers<>(mActivity, terminal, mCrews.size(), receiver);
+        crew = new Crew.TaggedCouriers<>(mActivity, medium, mCrews.size(), receiver);
         mCrews.add(crew);
         return crew;
     }
 
     public <InquiryT, ReplyT> Crew.NumberedCouriers<InquiryT, ReplyT> assignNumberedCrew(
-            Terminal<InquiryT, ReplyT> terminal, Crew.NumberedCouriers.Receiver<ReplyT> receiver) {
-        Verify.isNotNull(terminal, "terminal");
+            Medium<InquiryT, ReplyT> medium, Crew.NumberedCouriers.Receiver<ReplyT> receiver) {
+        Verify.isNotNull(medium, "medium");
         Verify.isNotNull(receiver, "receiver");
         final Crew.NumberedCouriers<InquiryT, ReplyT> crew;
-        crew = new Crew.NumberedCouriers<>(mActivity, terminal, mCrews.size(), receiver);
+        crew = new Crew.NumberedCouriers<>(mActivity, medium, mCrews.size(), receiver);
         mCrews.add(crew);
         return crew;
     }

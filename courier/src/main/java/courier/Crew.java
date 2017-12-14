@@ -11,12 +11,12 @@ import java.util.Map;
 public abstract class Crew<InquiryT, ReplyT> {
 
     private final Activity mActivity;
-    private final Terminal<InquiryT, ReplyT> mTerminal;
+    private final Medium<InquiryT, ReplyT> mMedium;
     private final int mDispatcherId;
 
-    private Crew(Activity activity, Terminal<InquiryT, ReplyT> terminal, int dispatcherId) {
+    private Crew(Activity activity, Medium<InquiryT, ReplyT> medium, int dispatcherId) {
         mActivity = activity;
-        mTerminal = terminal;
+        mMedium = medium;
         mDispatcherId = dispatcherId;
     }
 
@@ -38,9 +38,9 @@ public abstract class Crew<InquiryT, ReplyT> {
         private final Map<String, Courier<InquiryT, ReplyT>> mCouriers = new HashMap<>();
         private final Receiver<ReplyT> mReceiver;
 
-        TaggedCouriers(Activity activity, Terminal<InquiryT, ReplyT> terminal, int dispatcherId,
+        TaggedCouriers(Activity activity, Medium<InquiryT, ReplyT> medium, int dispatcherId,
                        Receiver<ReplyT> receiver) {
-            super(activity, terminal, dispatcherId);
+            super(activity, medium, dispatcherId);
             mReceiver = receiver;
         }
 
@@ -50,7 +50,7 @@ public abstract class Crew<InquiryT, ReplyT> {
                 return courier;
             }
 
-            courier = new Courier<>(super.getInvoker(), super.mTerminal, null, super.mDispatcherId, tag, 0);
+            courier = new Courier<>(super.getInvoker(), super.mMedium, null, super.mDispatcherId, tag, 0);
             mCouriers.put(tag, courier);
             return courier;
         }
@@ -76,9 +76,9 @@ public abstract class Crew<InquiryT, ReplyT> {
         private final LongSparseArray<Courier<InquiryT, ReplyT>> mCouriers = new LongSparseArray<>();
         private final Receiver<ReplyT> mReceiver;
 
-        NumberedCouriers(Activity activity, Terminal<InquiryT, ReplyT> terminal, int dispatcherId,
+        NumberedCouriers(Activity activity, Medium<InquiryT, ReplyT> medium, int dispatcherId,
                          Receiver<ReplyT> receiver) {
-            super(activity, terminal, dispatcherId);
+            super(activity, medium, dispatcherId);
             mReceiver = receiver;
         }
 
@@ -88,7 +88,7 @@ public abstract class Crew<InquiryT, ReplyT> {
                 return courier;
             }
 
-            courier = new Courier<>(super.getInvoker(), super.mTerminal, null, super.mDispatcherId, null, number);
+            courier = new Courier<>(super.getInvoker(), super.mMedium, null, super.mDispatcherId, null, number);
             mCouriers.put(number, courier);
             return courier;
         }

@@ -35,7 +35,7 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
 
     private final int mId;
     private final InquiryT mInquiry;
-    private final Terminal<InquiryT, ReplyT> mTerminal;
+    private final Medium<InquiryT, ReplyT> mMedium;
 
     private final int mDispatcherId;
     private final String mCrewTag;
@@ -50,13 +50,13 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
     private ReplyT mReply;
 
     Transporter(InvokerT activity,
-                Terminal<InquiryT, ReplyT> terminal,
+                Medium<InquiryT, ReplyT> medium,
                 InquiryT inquiry,
                 int dispatcherId,
                 String crewTag,
                 long crewNumber) {
         mId = provideId();
-        mTerminal = terminal;
+        mMedium = medium;
         mInquiry = inquiry;
         mDispatcherId = dispatcherId;
         mCrewTag = crewTag;
@@ -122,7 +122,7 @@ final class Transporter<InquiryT, ReplyT, InvokerT extends Activity & Hub>
 
     @Override
     protected Object doInBackground(Object[] params) {
-        mReply = mTerminal.exchange(mExchange, mInquiry);
+        mReply = mMedium.resolve(mExchange, mInquiry);
         return null;
     }
 
