@@ -57,8 +57,8 @@ public final class Courier<InquiryT, ReplyT> {
             throw new IllegalStateException("Cannot deliver result, courier has been started on a new exchange");
         }
 
-        mReceiver.onCourierDelivery(reply);
         mTransporter = null;
+        mReceiver.onCourierDelivery(reply);
     }
 
     final void quit() {
